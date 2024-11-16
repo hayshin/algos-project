@@ -14,7 +14,7 @@ class HashTable:
     def index(self, key):
         return hash(key) % self.capacity
 
-    def add(self, key, val):
+    def set(self, key, val):
         index = self.index(key)
         if self.table[index] is None:
             self.table[index] = Node(key, val)

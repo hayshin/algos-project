@@ -16,30 +16,37 @@ class BinarySearchTree:
         if self.is_empty():
             self.root = Node(key, val)
         else:
-            self._set_rec(self.root, key)
+            self._set(self.root, key, val)
             
-    def _set_rec(self, node, key):
-        if key < node.key:
-            if node.left is None:
-                node.left = Node(key, val)
+    def _set(self, node, key, val):
+        while True:
+            if key < node.key:
+                if node.left is None:
+                    node.left = Node(key, val)
+                    break
+                else:
+                    node = node.left
+            elif key > node.key:
+                if node.right is None:
+                    node.right = Node(key, val)
+                    break
+                else:
+                    node = node.right
             else:
-                self._set_rec(node.left, key)
-        elif key > node.key:
-            if node.right is None:
-                node.right = Node(key, val)
-            else:
-                self._set_rec(node.right, key)
+                node.val = val
+                break
 
     def get(self, key):
-        return self._get_rec(self.root, key)
+        return self._get(self.root, key)
 
-    def _get_rec(self, node, key):
-        if node is None:
-            raise KeyError(key)
-        if node.key == key:
-            return node.val
-        elif key < node.key:
-            return self._get_rec(node.left, key)
-        else:
-            return self._get_rec(node.right, key)
+    def _get(self, node, key):
+        while True:
+            if node is None:
+                raise KeyError(key)
+            if node.key == key:
+                return node.val
+            elif key < node.key:
+                node = node.left
+            else:
+                node = node.right
 
