@@ -5,10 +5,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class AVLTree<K extends Comparable<K>, V> implements Map<K, V>{
-
-  private class Node extends SimpleEntry<K, V> {
-    Node left, right;
+public class AVLTree<K extends Comparable<K>, V> extends TreeMap<K, V, AVLTree<K, V>.Node> {
+  class Node extends TreeEntry<K, V, Node> {
     int height;
 
     Node(K key, V value) {
@@ -17,123 +15,14 @@ public class AVLTree<K extends Comparable<K>, V> implements Map<K, V>{
     }
   }
 
-  private Node root;
-
-  public Set<Entry<K, V>> entrySet() {
-    TreeSet<Entry<K, V>> set = new TreeSet<>();
-    traverse(root, set);
-    return set;
+  public Node createNode(K key, V value) {
+    return new Node(key, value);
   }
 
-  private void traverse(Node node, Set<Entry<K, V>> set) {
-    if (node == null)
-      return;
-    traverse(node.left, set);
-    set.add(node);
-    traverse(node.right, set);
+  private int height(Node node) {
+    return node == null ? 0 : node.height;
   }
 
-  public V get(K key) {
-    Node node = getNode(root, key);
-    return node != null ? node.getValue() : null;
-  }
-
-  private Node getNode(Node node, K key) {
-    while (node != null) {
-      int cmp = key.compareTo(node.getKey());
-      if (cmp == 0)
-        return node;
-      else if (cmp < 0)
-        node = node.left;
-      else
-        node = node.right;
-    }
-    return null;
-  }
-
-  // Method to insert key-value pair into the tree
-  public V put(K key, V value) {
-    root = insert(root, key, value);
-    return value;
-  }
-
-  private Node insert(Node node, K key, V value) {
-    if (node == null)
-      return new Node(key, value);
-
-    int cmp = key.compareTo(node.getKey());
-    if (cmp < 0)
-      node.left = insert(node.left, key, value);
-    else if (cmp > 0)
-      node.right = insert(node.right, key, value);
-    else {
-      node.setValue(value); // Update the value if key already exists
-      return node;
-    }
-
-    updateHeight(node);
-    return rebalance(node);
-  }
-
-  public void remove(K key) {
-    root = delete(root, key);
-  }
-
-private Node delete(Node node, K key) {
-    if (node == null) {
-        return null; // Key not found, nothing to delete
-    }
-
-    int cmp = key.compareTo(node.getKey());
-
-    if (cmp < 0) {
-        // Key is smaller than current node's key, move to the left subtree
-        node.left = delete(node.left, key);
-    } else if (cmp > 0) {
-        // Key is larger than current node's key, move to the right subtree
-        node.right = delete(node.right, key);
-    } else {
-        // Node with the key found
-        if (node.left == null || node.right == null) {
-            // Node with only one child or no child
-            Node temp = (node.left != null) ? node.left : node.right;
-
-            if (temp == null) {
-                // No child case
-                node = null;
-            } else {
-                // One child case
-                node = temp;
-            }
-        } else {
-            // Node with two children
-            Node temp = minValueNode(node.right); // Find the inorder successor
-
-            // Copy the inorder successor's key and value to the current node
-            K successorKey = temp.getKey();
-            V successorValue = temp.getValue();
-
-            // Replace current node's key and value with the successor's key and value
-            node = new Node(successorKey, successorValue);
-
-            // Delete the inorder successor
-            node.right = delete(node.right, successorKey);
-        }
-    }
-
-    // If the tree had only one node, return it
-    if (node == null) {
-        return null;
-    }
-
-    // Update height of the current node
-    updateHeight(node);
-
-    // Rebalance the node
-    return rebalance(node);
-  }
-
-  // Helper function to update the height of the node
   private void updateHeight(Node node) {
     node.height = 1 + Math.max(height(node.left), height(node.right));
   }
@@ -205,18 +94,86 @@ private Node delete(Node node, K key) {
   }
 
   // Get the height of the node
-  private int height(Node node) {
-    return node == null ? 0 : node.height;
+
+  // Method to insert key-value pair into the tree
+  @Override
+  public V put(K key, V value) {
+    root = insert(root, key, value);
+    return value;
   }
 
-  // Get the node with minimum key value found in that tree
-  private Node minValueNode(Node node) {
-    Node current = node;
+  private Node insert(Node node, K key, V value) {
+    if (node == null) return new Node(key, value);
 
-    // Loop down to find the leftmost leaf
-    while (current.left != null)
-      current = current.left;
+    int cmp = key.compareTo(node.key);
+    if (cmp < 0)
+      node.left = insert(node.left, key, value);
+    else if (cmp > 0)
+      node.right = insert(node.right, key, value);
+    else {
+      node.value = value; // Update the value if key already exists
+      return node;
+    }
 
-    return current;
+    updateHeight(node);
+    return rebalance(node);
+  }
+
+  public void remove(K key) {
+    root = delete(root, key);
+  }
+
+  private Node delete(Node node, K key) {
+    if (node == null) {
+      return null; // Key not found, nothing to delete
+    }
+
+    int cmp = key.compareTo(node.getKey());
+
+    if (cmp < 0) {
+      // Key is smaller than current node's key, move to the left subtree
+      node.left = delete(node.left, key);
+    } else if (cmp > 0) {
+      // Key is larger than current node's key, move to the right subtree
+      node.right = delete(node.right, key);
+    } else {
+      // Node with the key found
+      if (node.left == null || node.right == null) {
+        // Node with only one child or no child
+        Node temp = (node.left != null) ? node.left : node.right;
+
+        if (temp == null) {
+          // No child case
+          node = null;
+        } else {
+          // One child case
+          node = temp;
+        }
+      } else {
+        // Node with two children
+        Node temp = first(node.right); // Find the inorder successor
+
+        // Copy the inorder successor's key and value to the current node
+        K successorKey = temp.getKey();
+        V successorValue = temp.getValue();
+
+        // Replace current node's key and value with the successor's key and value
+        node = new Node(successorKey, successorValue);
+
+        // Delete the inorder successor
+        node.right = delete(node.right, successorKey);
+      }
+    }
+
+    // If the tree had only one node, return it
+    if (node == null) {
+      return null;
+    }
+
+    // Update height of the current node
+    updateHeight(node);
+
+    // Rebalance the node
+    return rebalance(node);
   }
 }

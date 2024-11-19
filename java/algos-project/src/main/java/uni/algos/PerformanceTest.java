@@ -3,48 +3,62 @@ package uni.algos;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.lang.management.ManagementFactory;
 import uni.algos.trees.*;
 import uni.algos.hash_table.HashTable;
 import uni.algos.hash_table.HashTableOpenAddressing;
 
 public class PerformanceTest {
-  public static void testStructure(int[] data, Map<Integer, Integer> dataStructure) {
+  public static void testMap(int[] data, Map<Integer, Integer> map) {
     for (int value : data) {
-      dataStructure.put(value, 0);
+      map.put(value, 0);
     }
-    System.out.println(dataStructure.size());
+    // System.out.println(map.size());
   }
 
-  public static void testStructure(String[] data, Map<String, Integer> dataStructure) {
+  public static void testMap(String[] data, Map<String, Integer> map) {
     for (String value : data) {
-      dataStructure.put(value, 0);
+      map.put(value, 0);
     }
-    System.out.println(dataStructure.size());
+    // System.out.println(map.size());
   }
 
-  public static void main(String[] args) {
-    int repeats = 1;
-    int size = 25_000_000; // Example sizes; adjust as needed.
+  public static void main(String[] args) throws Exception {
+    // int size = 1_000_000; // Example sizes; adjust as needed.
 
-    String[] data = DataGenerator.randomStrings(size, 8, 8);
+    // String[] data = DataGenerator.randomStrings(size, 8, 8);
     // int[] data = DataGenerator.randomHotNums(size, 0, size);
+    // int[] data = DataGenerator.sortedNums(size);
     // String[] data = DataGenerator.randomStrings(size, 3, 16);
+    String pid = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
 
-    long totalDuration = 0;
+    String[] command = { "perf", "stat", "-e",
+        "task-clock,cpu-clock,cycles,instructions,cache-references,cache-misses,branches,branch-misses,dummy",
+        "-o", "out", "-p", pid, };
 
-    for (int i = 0; i < repeats; i++) {
-      long startTime = System.nanoTime();
-      // int[] data = readFromFile("random_nums_" + size, size);
-      // String[] data = readFromFileString("random_strings_len3_16_" + size, size);
-      testStructure(data, new BTree<String, Integer>());
-      long endTime = System.nanoTime();
-      totalDuration += (endTime - startTime);
+    ProcessBuilder pb = new ProcessBuilder(command);
+
+    // Process process = pb.start();
+    pb.start();
+    // process.onExit().thenRun(PerformanceTest::printGrepResults);
+
+    // Thread.sleep(1000);
+    // testMap(data, new AVLTree<Integer, Integer>());
+
+  }
+
+  static void printGrepResults() {
+    String[] command = { "cat", "out" };
+
+    ProcessBuilder pb = new ProcessBuilder(command);
+
+    try {
+      pb.start();
+    } catch (IOException e) {
+      System.out.println("Cannot print results");
     }
-
-    double averageTime = totalDuration / (double) repeats / 1_000_000_000.0;
-
-    System.out.printf("Average time for %d runs: %.6f seconds per run%n", repeats, averageTime);
   }
 
   public static int[] readFromFile(String filename, int size) throws IOException {
