@@ -151,7 +151,7 @@ public class AVLTree<K extends Comparable<K>, V> extends TreeMap<K, V, AVLTree<K
         }
       } else {
         // Node with two children
-        Node temp = first(node.right); // Find the inorder successor
+        Node temp = min(node.right); // Find the inorder successor
 
         // Copy the inorder successor's key and value to the current node
         K successorKey = temp.getKey();

@@ -11,24 +11,28 @@ public abstract class TreeMap<K extends Comparable<K>, V, E extends TreeEntry<K,
 
   protected E root;
 
-  private E rightOf(E node) {
+  protected E rightOf(E node) {
     return node == null ? null : node.right;
   }
 
-  private E leftOf(E node) {
+  protected E leftOf(E node) {
     return node == null ? null : node.left;
   }
 
-  public E first(E node) {
+  public E min(E node) {
     while (leftOf(node) != null)
       node = node.left;
     return node;
   }
 
-  public E last(E node) {
+  public E max(E node) {
     while (rightOf(node) != null)
       node = node.right;
     return node;
+  }
+
+  protected V value(E node) {
+    return node == null ? null : node.value;
   }
 
   @Override
@@ -38,10 +42,6 @@ public abstract class TreeMap<K extends Comparable<K>, V, E extends TreeEntry<K,
     @SuppressWarnings("unchecked")
     K key = (K) k;
     return value(get(root, key));
-  }
-
-  protected V value(E node) {
-    return node == null ? null : node.value;
   }
 
   protected E get(E node, K key) {
@@ -125,8 +125,8 @@ public abstract class TreeMap<K extends Comparable<K>, V, E extends TreeEntry<K,
     if (node == null)
       return null; // node not found
 
-    E successor = first(rightOf(node));
-    successor = (successor != null) ? successor : last(leftOf(node));
+    E successor = min(rightOf(node));
+    successor = (successor != null) ? successor : max(leftOf(node));
 
     if (successor != null) {
       remove(node, successor.key); // delete successor
@@ -168,7 +168,7 @@ public abstract class TreeMap<K extends Comparable<K>, V, E extends TreeEntry<K,
   private boolean containsValue(E node, V value) {
     if (node == null)
       return false;
-    return node.value == value || containsValue(node.right, value) || containsValue(node.left, value);
+    return node.value == value || containsValue(node.left, value) || containsValue(node.right, value);
   }
 
   @Override

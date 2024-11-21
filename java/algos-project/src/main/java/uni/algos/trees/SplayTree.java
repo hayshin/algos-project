@@ -1,22 +1,7 @@
 package uni.algos.trees;
 
-import uni.algos.DataStructure;
-
-class SplayNode<K extends Comparable<K>, V> {
-  K key;
-  V value;
-  SplayNode<K, V> left, right;
-
-  public SplayNode(K key, V value) {
-    this.key = key;
-    this.value = value;
-    this.left = null;
-    this.right = null;
-  }
-}
-
-public class SplayTree<K extends Comparable<K>, V> implements DataStructure<K, V> {
-  private SplayNode<K, V> root;
+public class SplayTree<K extends Comparable<K>, V> extends BinarySearchTree<K,V> {
+  private Node root;
 
   public SplayTree() {
     this.root = null;
@@ -26,21 +11,21 @@ public class SplayTree<K extends Comparable<K>, V> implements DataStructure<K, V
     return root == null;
   }
 
-  private SplayNode<K, V> rotateLeft(SplayNode<K, V> x) {
-    SplayNode<K, V> y = x.right;
+  private Node rotateLeft(Node x) {
+    Node y = x.right;
     x.right = y.left;
     y.left = x;
     return y;
   }
 
-  private SplayNode<K, V> rotateRight(SplayNode<K, V> x) {
-    SplayNode<K, V> y = x.left;
+  private Node rotateRight(Node x) {
+    Node y = x.left;
     x.left = y.right;
     y.right = x;
     return y;
   }
 
-  private SplayNode<K, V> splay(SplayNode<K, V> node, K key) {
+  private Node splay(Node node, K key) {
     if (node == null || node.key.equals(key)) {
       return node;
     }
@@ -88,7 +73,7 @@ public class SplayTree<K extends Comparable<K>, V> implements DataStructure<K, V
 
   public void set(K key, V value) {
     if (isEmpty()) {
-      root = new SplayNode<>(key, value);
+      root = new Node(key, value);
       return;
     }
 
@@ -99,7 +84,7 @@ public class SplayTree<K extends Comparable<K>, V> implements DataStructure<K, V
       return;
     }
 
-    SplayNode<K, V> newNode = new SplayNode<>(key, value);
+    Node newNode = new Node(key, value);
     if (key.compareTo(root.key) < 0) {
       newNode.right = root;
       newNode.left = root.left;
@@ -148,7 +133,7 @@ public class SplayTree<K extends Comparable<K>, V> implements DataStructure<K, V
       // If there is a left subtree:
       // - Splay the maximum node in the left subtree to make it the root of the left
       // subtree
-      SplayNode<K, V> temp = root.left;
+      Node temp = root.left;
       root.left = null; // Disconnect the left subtree
       temp = splay(temp, key); // Splay the maximum node in the left subtree
 

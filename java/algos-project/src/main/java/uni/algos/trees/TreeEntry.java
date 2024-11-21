@@ -6,7 +6,7 @@ public class TreeEntry<K extends Comparable<K>, V, E extends TreeEntry<K, V, E>>
     implements Map.Entry<K, V>, Comparable<E> {
   public K key;
   public V value;
-  public E left, right, parent;
+  public E left, right;
 
   public TreeEntry(K key, V value) {
     this.key = key;

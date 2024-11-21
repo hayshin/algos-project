@@ -1,2 +1,13 @@
-/home/hayshin/algos/java/algos-project/src/main/java/uni/algos/PerformanceTest.java
+/home/hayshin/algos/java/algos-project/src/main/java/uni/algos/trees/BTree.java
+/home/hayshin/algos/java/algos-project/src/main/java/uni/algos/hash_table/HashTable.java
+/home/hayshin/algos/java/algos-project/src/main/java/uni/algos/trees/BinarySearchTree.java
 /home/hayshin/algos/java/algos-project/src/main/java/uni/algos/trees/SplayTree.java
+/home/hayshin/algos/java/algos-project/src/main/java/uni/algos/PerformanceTest.java
+/home/hayshin/algos/java/algos-project/src/main/java/uni/algos/trees/TreeMap.java
+/home/hayshin/algos/java/algos-project/src/main/java/uni/algos/trees/RedBlackTree.java
+/home/hayshin/algos/java/algos-project/src/main/java/uni/algos/DataGenerator.java
+/home/hayshin/algos/java/algos-project/src/main/java/uni/algos/trees/AVLTree.java
+/home/hayshin/algos/java/algos-project/src/main/java/uni/algos/Maps.java
+/home/hayshin/algos/java/algos-project/src/main/java/uni/algos/trees/TreeEntry.java
+/home/hayshin/algos/java/algos-project/src/main/java/uni/algos/hash_table/HashTableOpenAddressing.java
+/home/hayshin/algos/java/algos-project/src/main/java/uni/algos/CorrectnessTest.java

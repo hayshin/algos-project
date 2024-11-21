@@ -92,7 +92,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
 
   public Set <Entry<K,V>> entrySet() {
     HashSet<Entry<K,V>> set = new HashSet<>();
-    
+    return set;
   }
 
   // Helper method to compute the index in the table

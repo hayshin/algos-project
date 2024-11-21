@@ -1,8 +1,12 @@
 package uni.algos.trees;
 
 import java.util.AbstractMap;
+import java.util.Set;
 
 public class RedBlackTree<K extends Comparable<K>, V> extends AbstractMap<K, V> {
+    public Set<Entry<K, V>> entrySet() {
+        return null;
+    }
 
     private static final boolean RED = true;
     private static final boolean BLACK = false;

@@ -8,6 +8,17 @@ import java.util.List;
 public class DataGenerator {
 
   private static final Random random = new Random(1);
+  public static final int[] sizes = { 1_024, 1_048_576, 16_777_216 };
+
+  public static int[][] getNums(int size) {
+    int[][] nums = { sortedNums(size), randomNums(size), randomHotNums(size) };
+    return nums;
+  }
+
+  public static String[][] getStrings(int size) {
+    String[][] nums = { randomStrings(size, 8), randomStrings(size, 3, 16), randomStrings(size, 64) };
+    return nums;
+  }
 
   public static int[] sortedNums(int size) {
     int[] sorted = new int[size];
@@ -26,6 +37,10 @@ public class DataGenerator {
     return data;
   }
 
+  public static int[] randomNums(int size) {
+    return randomNums(size, 0, size);
+  }
+
   // Generate a list of random strings with lengths between lenMin and lenMax
   public static String[] randomStrings(int size, int lenMin, int lenMax) {
     String[] data = new String[size];
@@ -34,6 +49,10 @@ public class DataGenerator {
       data[i] = generateRandomString(stringLength);
     }
     return data;
+  }
+
+  public static String[] randomStrings(int size, int len) {
+    return randomStrings(size, len, len);
   }
 
   private static String generateRandomString(int length) {
@@ -76,6 +95,10 @@ public class DataGenerator {
     shuffleArray(result);
 
     return result;
+  }
+
+  public static int[] randomHotNums(int size) {
+    return randomHotNums(size, 0, size);
   }
 
   private static void shuffleArray(int[] array) {
