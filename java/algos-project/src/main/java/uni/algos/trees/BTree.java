@@ -35,6 +35,7 @@ public class BTree<K extends Comparable<K>, V> extends AbstractMap<K, V> {
 
 
   private V get(Node node, K key) {
+    if (node == null) return null;
     int i = 0;
     while (i < node.numKeys && key.compareTo(node.keys[i]) > 0) {
       i++;

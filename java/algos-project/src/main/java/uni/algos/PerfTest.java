@@ -15,7 +15,7 @@ public class PerfTest {
     int repeats = Integer.parseInt(args[4]);
 
     if (dataType.equals("int")) {
-      var map = Maps.intMaps().get(treeName);
+      var map = Maps.intMap(treeName);
       int[] data = switch (dataName) {
         case "sorted" -> DataGenerator.sortedNums(size);
         case "random" -> DataGenerator.randomNums(size);
@@ -28,7 +28,7 @@ public class PerfTest {
         insertToMap(data, map);
       }
     } else {
-      var map = Maps.strMaps().get(treeName);
+      var map = Maps.strMap(treeName);
       String[] data = switch (dataName) {
         case "short" -> DataGenerator.randomStrings(size, 8);
         case "diff" -> DataGenerator.randomStrings(size, 3, 16);
@@ -74,7 +74,7 @@ public class PerfTest {
 
   static String[] command(String... args) {
     String[] command = { "perf", "stat", "-e",
-        "cycles,instructions,cache-references,cache-misses,branches,branch-misses,task-clock,cpu-clock,duration_time,user_time,system_time",
+        "cycles,instructions,cache-references,cache-misses,branches,branch-misses",
         "-j", "-o", "tests/" + String.join("_", args) + ".json", "-p", getPid(), };
     return command;
   }

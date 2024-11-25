@@ -9,6 +9,18 @@ public class DataGenerator {
 
   private static final Random random = new Random(1);
   public static final int[] sizes = { 1_024, 1_048_576, 16_777_216 };
+  public static void main(String[] args ){
+    
+    int[] nums = randomNums(100);
+    for(int num : nums){
+      System.out.print(num + " ");
+    }
+
+    String[] strs = randomStrings(100, 64);
+    for (String str : strs){
+      System.out.println(str);
+    }
+  }
 
   public static int[][] getNums(int size) {
     int[][] nums = { sortedNums(size), randomNums(size), randomHotNums(size) };

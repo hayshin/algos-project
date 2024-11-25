@@ -13,64 +13,69 @@ public class MemoryTest {
     int repeats = Integer.parseInt(args[4]);
 
     if (dataType.equals("int")) {
-      var map = Maps.intMaps().get(treeName);
+      if (treeName.equals("st") && dataName.equals("sorted"))
+        return;
       int[] data = switch (dataName) {
         case "sorted" -> DataGenerator.sortedNums(size);
         case "random" -> DataGenerator.randomNums(size);
         case "hot" -> DataGenerator.randomHotNums(size);
         default -> DataGenerator.sortedNums(size);
       };
-
+      var map = Maps.intMap(treeName);
+      measureMemory(data, map);
+      long sum = 0;
       for (int i = 0; i < repeats; i++) {
-        measureMemory(data, map);
+        map = Maps.intMap(treeName);
+        sum += measureMemory(data, map);
       }
+      System.out.print(sum / repeats + " ");
     } else {
-      var map = Maps.strMaps().get(treeName);
       String[] data = switch (dataName) {
         case "short" -> DataGenerator.randomStrings(size, 8);
         case "diff" -> DataGenerator.randomStrings(size, 3, 16);
         case "long" -> DataGenerator.randomStrings(size, 64);
         default -> DataGenerator.randomStrings(size, 8);
       };
-
+      var map = Maps.strMap(treeName);
+      measureMemory(data, map);
+      long sum = 0;
       for (int i = 0; i < repeats; i++) {
-        measureMemory(data, map);
+        map = Maps.strMap(treeName);
+        sum += measureMemory(data, map);
       }
+      System.out.print(sum / repeats + " ");
     }
   }
 
-  public static void measureMemory(int[] data, Map<Integer, Integer> map) {
+  public static long measureMemory(int[] data, Map<Integer, Integer> map) {
     Runtime runtime = Runtime.getRuntime();
     runtime.gc();
 
     long beforeUsedMemory = runtime.totalMemory() - runtime.freeMemory();
-    System.out.println("Used Memory before execution (bytes): " + beforeUsedMemory);
 
     for (int key : data) {
       map.put(key, 0);
     }
+
     long afterUsedMemory = runtime.totalMemory() - runtime.freeMemory();
-    System.out.println("Used Memory after execution (bytes): " + afterUsedMemory);
 
     long memoryUsedByCode = afterUsedMemory - beforeUsedMemory;
-    System.out.println("Memory used by code (bytes): " + memoryUsedByCode);
+    return memoryUsedByCode / 1024;
   }
 
-  public static void measureMemory(String[] data, Map<String, Integer> map) {
+  public static long measureMemory(String[] data, Map<String, Integer> map) {
     Runtime runtime = Runtime.getRuntime();
     runtime.gc();
 
     long beforeUsedMemory = runtime.totalMemory() - runtime.freeMemory();
-    System.out.println("Used Memory before execution (bytes): " + beforeUsedMemory);
 
     for (String key : data) {
       map.put(key, 0);
     }
 
     long afterUsedMemory = runtime.totalMemory() - runtime.freeMemory();
-    System.out.println("Used Memory after execution (bytes): " + afterUsedMemory);
 
     long memoryUsedByCode = afterUsedMemory - beforeUsedMemory;
-    System.out.println("Memory used by code (bytes): " + memoryUsedByCode);
+    return memoryUsedByCode / 1024;
   }
 }

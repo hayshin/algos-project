@@ -33,51 +33,64 @@ def format_row(data, column_widths):
 
 def main():
     trees = ["avlt", "bt", "ht", "htm", "htoa", "rbt"]
-    sorted(trees)
+    trees.sort()
     print(trees)
     datas = {}
     for file_path in get_test_files():
         args = file_path.split("_")
-        name = args[0]
+        tree = args[0]
         data_type = args[1]
         data_name = args[2]
-        if data_name not in datas:
-            datas[data_name] = {}
+        size = args[3]
+        
 
+        code = "_".join([data_type, data_name, size, tree]) 
+        if code not in datas:
+            datas[code] = []
         file_path = "tests/" + file_path
         events = read_json(file_path)
         for event in events:
             event_name = event["event"]
             value = float(event['counter-value'])
-            value /= (2**20)
-            if event_name not in datas[data_name]:
-                datas[data_name][event_name] = []
-            datas[data_name][event_name].append(value)
-    with open("table.txt", "w") as file:
-        for data_name, events in datas.items():
-            file.write(data_name + "\n")
-            # for event_name, values in events.items():
-            #     file.write(event_name, values + "\n")
+            value /= int(size)
+            datas[code].append(value)
+    keys = sorted(datas.keys())
+    prev = ""
+    for key in keys:
+        data_type, data_name,size,tree = key.split("_")
+        if data_type+data_name+size != prev:
+            print(data_type, data_name, size)
+            prev = data_type+data_name+size        
+        print(tree, " ")
+        for val in datas[key]:
+            print(val, end=" ")
+        print()
 
-            column_widths = [
-                    max(len("Event Name"), max(len(event) for event in events.keys())),
-                    max(len("Values"), 
-                        max(len(", ".join(f"        {value:.2f}" for value in values)) for values in events.values()))
-                ]
+    # with open("table.txt", "w") as file:
+    #     for data_name, events in datas.items():
+    #         file.write(data_name + "\n")
+    #         # for event_name, values in events.items():
+    #         #     file.write(event_name, values + "\n")
+
+    #         column_widths = [
+    #                 max(len("Event Name"), max(len(event) for event in events.keys())),
+    #                 max(len("Values"), 
+    #                     max(len(", ".join(f"        {value:.2f}" for value in values)) for values in events.values()))
+    #             ]
     
-                # file.write table heade + "\nr
-            file.write(create_separator(column_widths) + "\n")
-            file.write(format_row(["Event Name", "Values"], column_widths) + "\n")
-            file.write(create_separator(column_widths) + "\n")
+    #             # file.write table heade + "\nr
+    #         file.write(create_separator(column_widths) + "\n")
+    #         file.write(format_row(["Event Name", "Values"], column_widths) + "\n")
+    #         file.write(create_separator(column_widths) + "\n")
 
-            # file.write table row + "\ns
-            for event_name, values in events.items():
-                formatted_values = ", ".join(f"        {value:.2f}" for value in values)
-                file.write(format_row([event_name, formatted_values], column_widths) + "\n")
+    #         # file.write table row + "\ns
+    #         for event_name, values in events.items():
+    #             formatted_values = ", ".join(f"        {value:.2f}" for value in values)
+    #             file.write(format_row([event_name, formatted_values], column_widths) + "\n")
 
-            # file.write footer separato + "\nr
-            file.write(create_separator(column_widths) + "\n")
-            file.write( "\n")
+    #         # file.write footer separato + "\nr
+    #         file.write(create_separator(column_widths) + "\n")
+    #         file.write( "\n")
 
 if __name__ == "__main__":
     main()

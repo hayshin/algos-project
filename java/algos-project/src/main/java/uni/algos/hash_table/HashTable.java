@@ -7,11 +7,14 @@ import java.util.Set;
 import java.util.AbstractMap.SimpleEntry;
 
 public class HashTable<K, V> extends AbstractMap<K, V> {
-  private static class Node<K, V> extends SimpleEntry<K, V> {
+  private static class Node<K, V> {
+    K key;
+    V value;
     private Node<K, V> next;
 
     Node(K key, V value, Node<K, V> next) {
-      super(key, value);
+      this.key = key;
+      this.value = value;
       this.next = next;
     }
   }
@@ -38,8 +41,8 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     } else {
       Node<K, V> current = table[index];
       while (current.next != null) {
-        if (current.getKey().equals(key)) {
-          current.setValue(value); // Update value if key already exists
+        if (current.key.equals(key)) {
+          current.value = value; // Update value if key already exists
           return value;
         }
         current = current.next;
@@ -63,8 +66,8 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     Node<K, V> current = table[index];
 
     while (current != null) {
-      if (current.getKey().equals(key)) {
-        return current.getValue();
+      if (current.key.equals(key)) {
+        return current.value;
       }
       current = current.next;
     }
@@ -79,14 +82,14 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     Node<K, V> previous = null;
 
     while (current != null) {
-      if (current.getKey().equals(key)) {
+      if (current.key.equals(key)) {
         if (previous == null) {
           table[index] = current.next; // Remove the head node
         } else {
           previous.next = current.next; // Remove the current node
         }
         size--;
-        return previous.getValue();
+        return previous.value;
       }
       previous = current;
       current = current.next;
@@ -111,7 +114,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     for (Node<K, V> headNode : oldTable) {
       Node<K, V> current = headNode;
       while (current != null) {
-        put(current.getKey(), current.getValue());
+        put(current.key, current.value);
         current = current.next;
       }
     }
