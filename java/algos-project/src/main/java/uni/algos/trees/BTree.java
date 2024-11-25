@@ -1,10 +1,6 @@
 package uni.algos.trees;
 
-import java.util.AbstractMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import uni.algos.AbstractMap;
 
 public class BTree<K extends Comparable<K>, V> extends AbstractMap<K, V> {
   private static final int MIN_DEGREE = 2; // Minimum degree (defines the range for number of keys)
@@ -32,29 +28,27 @@ public class BTree<K extends Comparable<K>, V> extends AbstractMap<K, V> {
    * Retrieves the value mapped to the given key.
    */
   @Override
-  public V get(Object key) {
-    K k = (K) key;
-    return search(root, k);
+  public V get(Object k) {
+    K key = toKey(k);
+    return get(root, key);
   }
 
-  private V search(Node x, K key) {
+
+  private V get(Node node, K key) {
     int i = 0;
-    while (i < x.numKeys && key.compareTo(x.keys[i]) > 0) {
+    while (i < node.numKeys && key.compareTo(node.keys[i]) > 0) {
       i++;
     }
-    if (i < x.numKeys && key.compareTo(x.keys[i]) == 0) {
-      return x.values[i];
+    if (i < node.numKeys && key.compareTo(node.keys[i]) == 0) {
+      return node.values[i];
     }
-    if (x.isLeaf) {
+    if (node.isLeaf) {
       return null;
     } else {
-      return search(x.children[i], key);
+      return get(node.children[i], key);
     }
   }
 
-  /**
-   * Inserts the key-value pair into the B-tree.
-   */
   @Override
   public V put(K key, V value) {
     if (root == null) {
@@ -96,89 +90,56 @@ public class BTree<K extends Comparable<K>, V> extends AbstractMap<K, V> {
     parent.numKeys++;
   }
 
-  private V insertNonFull(Node x, K key, V value) {
-    int i = x.numKeys - 1;
-    if (x.isLeaf) {
-      while (i >= 0 && key.compareTo(x.keys[i]) < 0) {
-        x.keys[i + 1] = x.keys[i];
-        x.values[i + 1] = x.values[i];
+  private V insertNonFull(Node node, K key, V value) {
+    int i = node.numKeys - 1;
+    if (node.isLeaf) {
+      while (i >= 0 && key.compareTo(node.keys[i]) < 0) {
+        node.keys[i + 1] = node.keys[i];
+        node.values[i + 1] = node.values[i];
         i--;
       }
-      if (i >= 0 && key.compareTo(x.keys[i]) == 0) {
-        V oldValue = x.values[i];
-        x.values[i] = value;
+      if (i >= 0 && key.compareTo(node.keys[i]) == 0) {
+        V oldValue = node.values[i];
+        node.values[i] = value;
         return oldValue;
       } else {
-        x.keys[i + 1] = key;
-        x.values[i + 1] = value;
-        x.numKeys++;
+        node.keys[i + 1] = key;
+        node.values[i + 1] = value;
+        node.numKeys++;
         return null;
       }
     } else {
-      while (i >= 0 && key.compareTo(x.keys[i]) < 0) {
+      while (i >= 0 && key.compareTo(node.keys[i]) < 0) {
         i--;
       }
       i++;
-      if (x.children[i].numKeys == 2 * MIN_DEGREE - 1) {
-        splitChild(x, i, x.children[i]);
-        if (key.compareTo(x.keys[i]) > 0) {
+      if (node.children[i].numKeys == 2 * MIN_DEGREE - 1) {
+        splitChild(node, i, node.children[i]);
+        if (key.compareTo(node.keys[i]) > 0) {
           i++;
         }
       }
-      return insertNonFull(x.children[i], key, value);
+      return insertNonFull(node.children[i], key, value);
     }
   }
 
-  /**
-   * Returns the number of key-value mappings in this map.
-   */
   @Override
   public int size() {
     return size(root);
   }
 
-  private int size(Node x) {
-    if (x == null) {
-      return 0;
-    }
-    int count = x.numKeys;
-    if (!x.isLeaf) {
-      for (int i = 0; i <= x.numKeys; i++) {
-        count += size(x.children[i]);
+  private int size(Node name) {
+    if (name == null) return 0;
+    
+    int count = name.numKeys;
+    if (!name.isLeaf) {
+      for (int i = 0; i <= name.numKeys; i++) {
+        count += size(name.children[i]);
       }
     }
     return count;
   }
 
-  /**
-   * Returns a {@link Set} view of the mappings contained in this map.
-   */
-  @Override
-  public Set<Map.Entry<K, V>> entrySet() {
-    Set<Map.Entry<K, V>> set = new TreeSet<>();
-    traverse(root, set);
-    return set;
-  }
-
-  private void traverse(Node x, Set<Map.Entry<K, V>> set) {
-    if (x == null) {
-      return;
-    }
-    int i;
-    for (i = 0; i < x.numKeys; i++) {
-      if (!x.isLeaf) {
-        traverse(x.children[i], set);
-      }
-      set.add(new AbstractMap.SimpleEntry<>(x.keys[i], x.values[i]));
-    }
-    if (!x.isLeaf) {
-      traverse(x.children[i], set);
-    }
-  }
-
-  /**
-   * Removal operation is not supported in this implementation.
-   */
   @Override
   public V remove(Object key) {
     throw new UnsupportedOperationException("Remove not supported yet");

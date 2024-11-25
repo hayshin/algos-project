@@ -5,14 +5,14 @@ import java.util.Map;
 
 public class CorrectnessTest {
   public static void main(String... args) {
-    int[] sizes = {1024};
+    int[] sizes = {16_024};
     for (int size : sizes) {
       for (var data : DataGenerator.getNums(size)) {
         var correctMap = correctMap(data);
         for (var entry : Maps.intMaps().entrySet()) {
           var map = entry.getValue();
           var name = entry.getKey();
-          PerformanceTest.insertToMap(data, map);
+          PerfTest.insertToMap(data, map);
           boolean isCorrect = checkMap(data, correctMap, map);
           System.out.printf("%s is correct = %b with size %d on nums\n", name, isCorrect, size);
         }
@@ -22,7 +22,7 @@ public class CorrectnessTest {
         for (var entry : Maps.strMaps().entrySet()) {
           var map = entry.getValue();
           var name = entry.getKey();
-          PerformanceTest.insertToMap(data, map);
+          PerfTest.insertToMap(data, map);
           boolean isCorrect = checkMap(data, correctMap, map);
           System.out.printf("%s is correct = %b with size %d on strings\n", name, isCorrect, size);
         }

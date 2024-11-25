@@ -1,13 +1,13 @@
 package uni.algos.hash_table;
 
-import java.util.AbstractMap;
+import uni.algos.AbstractMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.AbstractMap.SimpleEntry;
 
 public class HashTable<K, V> extends AbstractMap<K, V> {
-  private static class Node<K, V> extends SimpleEntry<K,V> {
+  private static class Node<K, V> extends SimpleEntry<K, V> {
     private Node<K, V> next;
 
     Node(K key, V value, Node<K, V> next) {
@@ -28,6 +28,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
   }
 
   // Put method to add or update a key-value pair
+  @Override
   public V put(K key, V value) {
     int index = getIndex(key);
 
@@ -56,6 +57,7 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
   }
 
   // Get method to retrieve the value associated with a key
+  @Override
   public V get(Object key) {
     int index = getIndex(key);
     Node<K, V> current = table[index];
@@ -70,7 +72,8 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
   }
 
   // Remove method to delete a key-value pair
-  public void del(K key) {
+  @Override
+  public V remove(Object key) {
     int index = getIndex(key);
     Node<K, V> current = table[index];
     Node<K, V> previous = null;
@@ -83,25 +86,23 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
           previous.next = current.next; // Remove the current node
         }
         size--;
-        return;
+        return previous.getValue();
       }
       previous = current;
       current = current.next;
     }
+    return null;
   }
 
-  public Set <Entry<K,V>> entrySet() {
-    HashSet<Entry<K,V>> set = new HashSet<>();
-    return set;
+  protected int hash(Object object) {
+    return object.hashCode();
   }
 
-  // Helper method to compute the index in the table
-  private int getIndex(Object key) {
-    int hash = key.hashCode();
+  protected int getIndex(Object key) {
+    int hash = hash(key);
     return (hash & 0x7FFFFFFF) % table.length; // Ensure non-negative index
   }
 
-  // Resize the table when load factor exceeded
   private void resize() {
     Node<K, V>[] oldTable = table;
     table = new Node[oldTable.length * 2];
@@ -116,15 +117,8 @@ public class HashTable<K, V> extends AbstractMap<K, V> {
     }
   }
 
-  public boolean containsKey(Object key) {
-    return get(key) != null;
-  }
-
+  @Override
   public int size() {
     return size;
-  }
-
-  public boolean isEmpty() {
-    return size == 0;
   }
 }

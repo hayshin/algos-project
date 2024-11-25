@@ -4,8 +4,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.Collection;
+import uni.algos.AbstractMap;
 
-public abstract class TreeMap<K extends Comparable<K>, V, E extends TreeEntry<K, V, E>> implements Map<K, V> {
+public abstract class TreeMap<K extends Comparable<K>, V, E extends TreeEntry<K, V, E>> extends AbstractMap<K, V> {
 
   protected abstract E createNode(K key, V value);
 
@@ -35,12 +36,10 @@ public abstract class TreeMap<K extends Comparable<K>, V, E extends TreeEntry<K,
     return node == null ? null : node.value;
   }
 
+
   @Override
   public V get(Object k) {
-    if (!(k instanceof Comparable))
-      throw new ClassCastException();
-    @SuppressWarnings("unchecked")
-    K key = (K) k;
+    K key = toKey(k);
     return value(get(root, key));
   }
 
@@ -63,10 +62,10 @@ public abstract class TreeMap<K extends Comparable<K>, V, E extends TreeEntry<K,
       root = createNode(key, value);
       return null;
     }
-    return put(root, key, value);
+    return put(root, key, value).value;
   }
 
-  protected V put(E node, K key, V value) {
+  protected E put(E node, K key, V value) {
     E parent = node;
     int cmp = 0;
 
@@ -78,31 +77,23 @@ public abstract class TreeMap<K extends Comparable<K>, V, E extends TreeEntry<K,
       else if (cmp < 0)
         node = node.left;
       else {
-        return node.setValue(value);
+        node.setValue(value);
+        return node;
       }
     }
 
-    if (cmp > 0)
-      parent.right = createNode(key, value);
-    else if (cmp < 0)
-      parent.left = createNode(key, value);
+    E newNode = createNode(key, value);
+    if (cmp < 0)
+      parent.setLeft(newNode);
+    else
+      parent.setRight(newNode);
 
-    return null;
-  }
-
-  @Override
-  public void putAll(Map<? extends K, ? extends V> map) {
-    for (Entry<? extends K, ? extends V> entry : map.entrySet()) {
-      put(entry.getKey(), entry.getValue());
-    }
+    return newNode;
   }
 
   @Override
   public V remove(Object k) {
-    if (!(k instanceof Comparable))
-      throw new ClassCastException();
-    @SuppressWarnings("unchecked")
-    K key = (K) k;
+    K key = toKey(k);
     return remove(root, key);
   }
 
@@ -130,13 +121,13 @@ public abstract class TreeMap<K extends Comparable<K>, V, E extends TreeEntry<K,
 
     if (successor != null) {
       remove(node, successor.key); // delete successor
-      node.key = successor.key; // replace node key, value with successor key, value
-      node.value = successor.value;
+      node.setKey(successor.key);
+      node.setValue(successor.value);
     } else { // node has no childs so just set link to it to null
       if (cmp > 0)
-        parent.right = null;
+        parent.setRight(null);
       else if (cmp < 0)
-        parent.left = null;
+        parent.setLeft(null);
     }
 
     return node.value;
@@ -153,10 +144,6 @@ public abstract class TreeMap<K extends Comparable<K>, V, E extends TreeEntry<K,
     return 1 + size(node.left) + size(node.right);
   }
 
-  @Override
-  public boolean containsKey(Object k) {
-    return get(k) != null;
-  }
 
   @Override
   public boolean containsValue(Object v) {
@@ -169,16 +156,6 @@ public abstract class TreeMap<K extends Comparable<K>, V, E extends TreeEntry<K,
     if (node == null)
       return false;
     return node.value == value || containsValue(node.left, value) || containsValue(node.right, value);
-  }
-
-  @Override
-  public Set<Entry<K, V>> entrySet() {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public Set<K> keySet() {
-    throw new UnsupportedOperationException();
   }
 
   @Override
@@ -214,11 +191,6 @@ public abstract class TreeMap<K extends Comparable<K>, V, E extends TreeEntry<K,
     array[index] = node.key;
     index = toArray(node.right, array, index);
     return index + 1;
-  }
-
-  @Override
-  public boolean isEmpty() {
-    return root == null;
   }
 
   @Override

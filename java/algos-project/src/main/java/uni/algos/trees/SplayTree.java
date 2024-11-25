@@ -1,15 +1,6 @@
 package uni.algos.trees;
 
 public class SplayTree<K extends Comparable<K>, V> extends BinarySearchTree<K,V> {
-  private Node root;
-
-  public SplayTree() {
-    this.root = null;
-  }
-
-  public boolean isEmpty() {
-    return root == null;
-  }
 
   private Node rotateLeft(Node x) {
     Node y = x.right;
@@ -71,17 +62,18 @@ public class SplayTree<K extends Comparable<K>, V> extends BinarySearchTree<K,V>
     }
   }
 
-  public void set(K key, V value) {
+  @Override
+  public V put(K key, V value) {
     if (isEmpty()) {
       root = new Node(key, value);
-      return;
+      return null;
     }
 
     root = splay(root, key);
 
     if (root.key.equals(key)) {
       root.value = value; // Update value if key already exists
-      return;
+      return root.value;
     }
 
     Node newNode = new Node(key, value);
@@ -95,37 +87,38 @@ public class SplayTree<K extends Comparable<K>, V> extends BinarySearchTree<K,V>
       root.right = null;
     }
     root = newNode;
+    return value;
   }
 
-  public V get(K key) throws Exception {
+  @Override
+  public V get(Object k) {
+    K key = toKey(k);
     if (isEmpty()) {
-      throw new Exception("Key " + key + " not found");
+      return null;
     }
 
     root = splay(root, key);
 
     if (root.key.equals(key)) {
       return root.value;
-    } else {
-      throw new Exception("Key " + key + " not found");
-    }
+    } 
+    
+    return null;
   }
 
-  public void del(K key) throws Exception {
+  @Override
+  public V remove(Object k){
+    K key = toKey(k);
     if (isEmpty()) {
-      throw new Exception("Cannot delete from an empty tree.");
+      return null;
     }
 
-    // Splay the tree to bring the node with the given key to the root
     root = splay(root, key);
 
-    // If the root's key doesn't match the key to be deleted, the key is not in the
-    // tree
     if (root == null || !root.key.equals(key)) {
-      throw new Exception("Key " + key + " not found for deletion.");
+      return null;
     }
 
-    // Handle deletion
     if (root.left == null) {
       // If there is no left subtree, promote the right subtree
       root = root.right;
@@ -141,5 +134,6 @@ public class SplayTree<K extends Comparable<K>, V> extends BinarySearchTree<K,V>
       temp.right = root.right;
       root = temp;
     }
+    return null;
   }
 }

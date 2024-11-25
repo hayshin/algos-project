@@ -1,0 +1,9 @@
+{"counter-value" : "8691722361.000000", "unit" : "", "event" : "cycles:u", "event-runtime" : 2128001392, "pcnt-running" : 100.00, "metric-value" : "4.085204", "metric-unit" : "GHz"}
+{"counter-value" : "9069839592.000000", "unit" : "", "event" : "instructions:u", "event-runtime" : 2127927547, "pcnt-running" : 100.00, "metric-value" : "1.043503", "metric-unit" : "insn per cycle"}
+{"counter-value" : "103813867.000000", "unit" : "", "event" : "cache-references:u", "event-runtime" : 2127854015, "pcnt-running" : 100.00, "metric-value" : "48.793648", "metric-unit" : "M/sec"}
+{"counter-value" : "53362134.000000", "unit" : "", "event" : "cache-misses:u", "event-runtime" : 2127791992, "pcnt-running" : 100.00, "metric-value" : "51.401740", "metric-unit" : "of all cache refs"}
+{"counter-value" : "1458607444.000000", "unit" : "", "event" : "branches:u", "event-runtime" : 2127731500, "pcnt-running" : 100.00, "metric-value" : "685.561381", "metric-unit" : "M/sec"}
+{"counter-value" : "29378974.000000", "unit" : "", "event" : "branch-misses:u", "event-runtime" : 2127670404, "pcnt-running" : 100.00, "metric-value" : "2.014180", "metric-unit" : "of all branches"}
+{"counter-value" : "2127.610283", "unit" : "msec", "event" : "task-clock:u", "event-runtime" : 2127610283, "pcnt-running" : 100.00, "metric-value" : "1.062735", "metric-unit" : "CPUs utilized"}
+{"counter-value" : "2126.864001", "unit" : "msec", "event" : "cpu-clock:u", "event-runtime" : 2127552179, "pcnt-running" : 100.00, "metric-value" : "1.062362", "metric-unit" : "CPUs utilized"}
+{"counter-value" : "2002612880.000000", "unit" : "ns", "event" : "duration_time", "event-runtime" : 2002612880, "pcnt-running" : 100.00, "metric-value" : "0.000000", "metric-unit" : "(null)"}
